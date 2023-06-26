@@ -12,6 +12,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import axios from 'axios';
 
 function Copyright(props) {
   return (
@@ -35,16 +36,24 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-export default function SignIn({ setRegister }) {
+export default function SignIn({ setRegister, setIsLoggedIn}) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
 
+    axios.post('http://localhost:5000/login', {
+        email:  data.get("email"),
+        password: data.get("password"),
+    }).then((res)=>{
+        console.log(res)
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('email', res.data.email);
+        localStorage.setItem('id', res.data._id);
+        setIsLoggedIn(true);
+    }).catch((err)=>{
+        console.log(err);
+    })
+  }
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
