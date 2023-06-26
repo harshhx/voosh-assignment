@@ -45,7 +45,6 @@ export default function SignIn({ setRegister, setIsLoggedIn}) {
         email:  data.get("email"),
         password: data.get("password"),
     }).then((res)=>{
-        console.log(res)
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('email', res.data.email);
         localStorage.setItem('id', res.data._id);
