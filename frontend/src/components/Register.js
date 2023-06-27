@@ -43,6 +43,32 @@ export default function SignUp({ setRegister }) {
     });
   };
 
+  const handleGoogleSignIn = () => {
+    window.location.href = "http://localhost:5000/auth/google";
+  };
+
+  React.useEffect(() => {
+    const handleToken = () => {
+      console.log("handleToken");
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get("token");
+
+      if (token) {
+        console.log(token);
+        localStorage.setItem("token", token);
+        // Perform any other actions with the token as needed
+
+        const urlWithoutToken = window.location.href.replace(
+          `?token=${token}`,
+          ""
+        );
+        window.history.replaceState({}, document.title, urlWithoutToken);
+      }
+    };
+
+    handleToken(); 
+  }, []); 
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -108,6 +134,14 @@ export default function SignUp({ setRegister }) {
               sx={{ mt: 3, mb: 2 }}
             >
               Sign Up
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={handleGoogleSignIn}
+            >
+              Sign in with Google
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
