@@ -53,7 +53,7 @@ const tiers = [
   },
 ];
 
-function Modal({ open, handleClose }) {
+function Modal({ open, handleClose, getData, setGetData }) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [mobile, setMobile] = useState("");
@@ -61,6 +61,25 @@ function Modal({ open, handleClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission logic here
+
+    axios.post(
+      "http://localhost:5000/order/create",
+      {
+        itemName: name,
+        totalAmount: price,
+        mobile: mobile,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    ).then((res)=>{
+      setGetData(!getData)
+    }).catch((err)=>{
+      console.log(err);
+    })
+
     console.log(name, price, mobile);
     // Reset form fields
     setName("");
@@ -101,13 +120,15 @@ function Modal({ open, handleClose }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             style={{ marginBottom: 10 }}
+            required={true}
           />
           <input
-            type="text"
+            type="number"
             placeholder="Price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             style={{ marginBottom: 10 }}
+            required={true}
           />
           <input
             type="text"
@@ -115,6 +136,7 @@ function Modal({ open, handleClose }) {
             value={mobile}
             onChange={(e) => setMobile(e.target.value)}
             style={{ marginBottom: 10 }}
+            required={true}
           />
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Button
@@ -137,6 +159,7 @@ function Modal({ open, handleClose }) {
 function Order() {
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState([]);
+  const [getData, setGetData] = useState(false);
 
   useEffect(() => {
     axios
@@ -146,7 +169,6 @@ function Order() {
         },
       })
       .then((res) => {
-        console.log(res.data.allOrders);
         if (res?.data?.allOrders) {
           setData(res.data.allOrders);
         }
@@ -154,7 +176,12 @@ function Order() {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [getData]);
+
+  useEffect(()=>{
+    setGetData(!getData);
+  }, [])
+
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -202,7 +229,7 @@ function Order() {
         >
           Add Order
         </Button>
-        {openModal && <Modal open={openModal} handleClose={handleCloseModal} />}
+        {openModal && <Modal open={openModal} handleClose={handleCloseModal} setGetData={setGetData} getData={getData}/>}
       </Container>
       {/* End hero unit */}
       <Container maxWidth="md" component="main">
