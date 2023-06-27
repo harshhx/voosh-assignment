@@ -43,6 +43,6 @@ module.exports.logout = async (req, res) => {
     req.user.token = null;
     res.send();
   } catch (error) {
-    req.status(500).send();
+    res.status(500).send();
   }
 };

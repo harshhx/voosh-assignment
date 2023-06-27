@@ -12,47 +12,53 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from 'axios';
+import axios from "axios";
 
 function SignIn({ setRegister, setIsLoggedIn }) {
-
-
   React.useEffect(() => {
     const handleToken = () => {
       console.log("handleToken");
       const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
-      
+      const token = urlParams.get("token");
+
       if (token) {
         console.log(token);
-        localStorage.setItem('token', token);
+        localStorage.setItem("token", token);
         // Perform any other actions with the token as needed
+
+        const urlWithoutToken = window.location.href.replace(
+          `?token=${token}`,
+          ""
+        );
+        window.history.replaceState({}, document.title, urlWithoutToken);
       }
     };
 
     handleToken(); // Call handleToken function when the component mounts to check if a token is present in the URL
   }, []); // Empty dependency array to run the effect only once
 
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    axios.post('http://localhost:5000/login', {
-      email:  data.get("email"),
-      password: data.get("password"),
-    }).then((res)=>{
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('email', res.data.email);
-      localStorage.setItem('id', res.data._id);
-      setIsLoggedIn(true);
-    }).catch((err)=>{
-      console.log(err);
-    });
+    axios
+      .post("http://localhost:5000/login", {
+        email: data.get("email"),
+        password: data.get("password"),
+      })
+      .then((res) => {
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("email", res.data.email);
+        localStorage.setItem("id", res.data._id);
+        setIsLoggedIn(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleGoogleSignIn = () => {
-    window.location.href = 'http://localhost:5000/auth/google';
+    window.location.href = "http://localhost:5000/auth/google";
   };
 
   return (

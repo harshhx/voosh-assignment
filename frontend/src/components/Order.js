@@ -13,45 +13,6 @@ import GlobalStyles from "@mui/material/GlobalStyles";
 import Container from "@mui/material/Container";
 import axios from "axios";
 
-const tiers = [
-  {
-    title: "Free",
-    price: "0",
-    description: [
-      "10 users included",
-      "2 GB of storage",
-      "Help center access",
-      "Email support",
-    ],
-    buttonText: "Sign up for free",
-    buttonVariant: "outlined",
-  },
-  {
-    title: "Pro",
-    subheader: "Most popular",
-    price: "15",
-    description: [
-      "20 users included",
-      "10 GB of storage",
-      "Help center access",
-      "Priority email support",
-    ],
-    buttonText: "Get started",
-    buttonVariant: "contained",
-  },
-  {
-    title: "Enterprise",
-    price: "30",
-    description: [
-      "50 users included",
-      "30 GB of storage",
-      "Help center access",
-      "Phone & email support",
-    ],
-    buttonText: "Contact us",
-    buttonVariant: "outlined",
-  },
-];
 
 function Modal({ open, handleClose, getData, setGetData }) {
   const [name, setName] = useState("");
@@ -156,7 +117,7 @@ function Modal({ open, handleClose, getData, setGetData }) {
   );
 }
 
-function Order() {
+function Order({setIsLoggedIn, setGetProfile, getProfile}) {
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState([]);
   const [getData, setGetData] = useState(false);
@@ -190,6 +151,21 @@ function Order() {
   const handleCloseModal = () => {
     setOpenModal(false);
   };
+
+  const handleLogout = () =>{
+    // axios.post('http://localhost:5000/logout', {}, {
+    //   headers: {
+    //     Authorization: 'Bearer ' + localStorage.getItem('token')
+    //   }
+    // }).then((res)=>{
+    //   localStorage.clear();
+    //   setIsLoggedIn(false)
+    // }).catch((err)=>{
+    //   console.log(err);
+    // })
+    localStorage.clear();
+    setGetProfile(!getProfile);
+  }
 
   return (
     <ThemeProvider theme={createTheme()}>
@@ -228,6 +204,14 @@ function Order() {
           style={{ marginTop: 20 }}
         >
           Add Order
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleLogout}
+          style={{ marginTop: 20, marginLeft: 10 }}
+        >
+          Logout
         </Button>
         {openModal && <Modal open={openModal} handleClose={handleCloseModal} setGetData={setGetData} getData={getData}/>}
       </Container>
