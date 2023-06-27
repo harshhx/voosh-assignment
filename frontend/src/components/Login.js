@@ -14,47 +14,49 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from 'axios';
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+function SignIn({ setRegister, setIsLoggedIn }) {
 
-// TODO remove, this demo shouldn't need to reset the theme.
 
-const defaultTheme = createTheme();
+  React.useEffect(() => {
+    const handleToken = () => {
+      console.log("handleToken");
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      
+      if (token) {
+        console.log(token);
+        localStorage.setItem('token', token);
+        // Perform any other actions with the token as needed
+      }
+    };
 
-export default function SignIn({ setRegister, setIsLoggedIn}) {
+    handleToken(); // Call handleToken function when the component mounts to check if a token is present in the URL
+  }, []); // Empty dependency array to run the effect only once
+
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
     axios.post('http://localhost:5000/login', {
-        email:  data.get("email"),
-        password: data.get("password"),
+      email:  data.get("email"),
+      password: data.get("password"),
     }).then((res)=>{
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('email', res.data.email);
-        localStorage.setItem('id', res.data._id);
-        setIsLoggedIn(true);
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('email', res.data.email);
+      localStorage.setItem('id', res.data._id);
+      setIsLoggedIn(true);
     }).catch((err)=>{
-        console.log(err);
-    })
-  }
+      console.log(err);
+    });
+  };
+
+  const handleGoogleSignIn = () => {
+    window.location.href = 'http://localhost:5000/auth/google';
+  };
+
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={createTheme()}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -105,6 +107,14 @@ export default function SignIn({ setRegister, setIsLoggedIn}) {
             >
               Sign In
             </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={handleGoogleSignIn}
+            >
+              Sign in with Google
+            </Button>
             <Grid container>
               <Grid item>
                 <Link
@@ -120,8 +130,9 @@ export default function SignIn({ setRegister, setIsLoggedIn}) {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
   );
 }
+
+export default SignIn;
